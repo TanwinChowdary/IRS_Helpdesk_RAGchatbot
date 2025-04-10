@@ -1,5 +1,5 @@
 import streamlit as st
-from rag_pipeline import query_index, generate_answer
+from src.rag_pipeline import query_index, generate_answer
 import pickle
 
 st.set_page_config(page_title="IRS RAG Chatbot")
