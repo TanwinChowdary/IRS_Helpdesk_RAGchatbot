@@ -2,9 +2,11 @@ requests
 beautifulsoup4
 pdfplumber
 langchain
-transformers
 torch
 faiss-cpu
 numpy
-openai
 streamlit
+transformers
+accelerate
+bitsandbytes
+sentencepiece
