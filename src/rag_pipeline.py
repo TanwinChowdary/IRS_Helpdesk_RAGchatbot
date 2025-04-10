@@ -1,7 +1,17 @@
-import openai
-import os
-from src.embed import get_embedding
+import torch
 import numpy as np
+from src.embed import get_embedding
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+# Load LLaMA2 model from Hugging Face
+MODEL_NAME = "meta-llama/Llama-2-7b-chat-hf"  # Or any fine-tuned variant you prefer
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_auth_token=True)
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_NAME,
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
 
 def query_index(index, query, texts, top_k=3):
     try:
@@ -11,16 +21,9 @@ def query_index(index, query, texts, top_k=3):
     except Exception as e:
         return f"Error retrieving chunks: {e}"
 
-def generate_answer(context, question, use_openai=True):
-    if not use_openai:
-        return "Local model not implemented in this version."
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-    prompt = f"Use the following IRS content to answer the question:\n{context}\n\nQ: {question}\nA:"
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return response['choices'][0]['message']['content']
-    except Exception as e:
-        return f"Error generating answer: {e}"
+def generate_answer(context, question, use_openai=False):
+    prompt = f"""<s>[INST] Use the following IRS content to answer the question:\n{context}\n\nQ: {question}\nA: [/INST]"""
+    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+    with torch.no_grad():
+        outputs = model.generate(**inputs, max_new_tokens=300, do_sample=True, temperature=0.7)
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)
