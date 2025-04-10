@@ -1,113 +1,119 @@
 # IRS_Helpdesk_RAGchatbot
 
-# IRS RAG Chatbot (PyTorch) – Complete GitHub Project
+# 🦙 IRS RAG Chatbot – Powered by LLaMA2 (Open Source)
 
-## 🧾 Overview
-An intelligent IRS Tax Assistant powered by **Retrieval-Augmented Generation (RAG)**, combining official IRS documentation with the language generation capabilities of GPT-3.5. Built with PyTorch, Hugging Face, FAISS, and Streamlit.
-
-Whether you're wondering *"Do I need to file taxes if I made $12,000?"* or *"What's a 1099 form?"*, this chatbot's got your back with official IRS content.
+## 📌 Project Overview
+This is a Retrieval-Augmented Generation (RAG) chatbot built to answer IRS-related tax questions using official U.S. tax documents and publications. It's powered by Meta’s **LLaMA2 7B model**, running locally via Hugging Face Transformers. This version is **fully open-source, offline-capable**, and requires **no API keys or external services**.
 
 ---
 
-## 🛠 Features
-- ✅ **End-to-End RAG Pipeline** (Retriever + Generator)
-- 📚 **IRS Knowledge Base** from PDFs + FAQs
-- 🧠 **PyTorch Embeddings** using MiniLM
-- 🔍 **FAISS-based vector search** for fast retrieval
-- 💬 **Streamlit UI** for an interactive chatbot experience
-- 🌐 **Switch between OpenAI GPT-3.5 and local model (placeholder)**
+## 🧠 Core Features
+- 🔍 FAISS-based document retrieval from IRS FAQs and tax PDFs
+- 🦙 Local language generation using **Meta’s LLaMA2**
+- ✂️ Smart text chunking via LangChain
+- 💬 Clean and responsive **Streamlit UI**
+- 💾 No OpenAI or external API dependency
 
 ---
 
 ## 🧱 Tech Stack
 - Python, PyTorch
-- Hugging Face Transformers
 - FAISS (vector search)
-- LangChain (chunking)
-- Streamlit (UI)
-- OpenAI API (for LLM responses)
+- Hugging Face Transformers
+- LangChain
+- Streamlit
+- LLaMA2 via `meta-llama/Llama-2-7b-chat-hf`
 
 ---
 
-## 📁 Directory Structure
+## 📁 Folder Structure
 ```
 irs-rag-chatbot/
-├── data/
-│   ├── pdfs/                  # IRS official documents
-│   ├── irs_faq.txt            # Scraped FAQ data
-│   └── combined_irs_text.txt # Merged source for embeddings
+├── data/                        # IRS PDFs, scraped content
+│   ├── pdfs/
+│   ├── irs_faq.txt
+│   └── combined_irs_text.txt
 ├── src/
-│   ├── ingest.py              # Scrape and download data
-│   ├── load_data.py           # Combine and cache all text
-│   ├── embed.py               # Embedding logic using PyTorch
-│   ├── build_index.py         # Chunk → Embed → FAISS → Save
-│   ├── rag_pipeline.py        # Retrieval + Generation logic
-│   └── app.py                 # Streamlit frontend app
-├── vector_store.pkl           # Saved FAISS index and chunks
-├── .env.template              # Environment variable example
-├── requirements.txt           # Dependencies
-├── Dockerfile                 # Optional Docker setup
-├── Makefile                   # Command-line shortcuts (optional)
-└── README.md                  # You are here.
+│   ├── ingest.py                # Scrape and collect IRS content
+│   ├── load_data.py             # Merge PDF + FAQ into one corpus
+│   ├── embed.py                 # Text embedding logic (MiniLM)
+│   ├── build_index.py           # Chunk, embed, build FAISS index
+│   ├── rag_pipeline.py          # RAG logic using LLaMA2
+│   └── app.py                   # Streamlit chatbot UI
+├── vector_store.pkl             # Serialized vector DB + chunks
+├── requirements.txt             # Project dependencies
+├── Makefile                     # Easy CLI commands
+├── test_run.py                  # Quick end-to-end RAG test
+└── README.md                    # You're reading this
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 How to Run
 
-### 1. Clone the Repo
-```bash
-git clone https://github.com/your-username/irs-rag-chatbot.git
-cd irs-rag-chatbot
-```
-
-### 2. Install Requirements
+### 1. 🔧 Install Requirements
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Prepare Environment Variables
+### 2. 🔑 Login to Hugging Face (to access LLaMA2)
 ```bash
-cp .env.template .env
-# Add your OpenAI key inside .env
+huggingface-cli login
+```
+You need an account with access to LLaMA2 via Hugging Face.
+
+### 3. 🧽 Scrape IRS Data
+```bash
+make ingest
 ```
 
-### 4. Run Data Pipeline
+### 4. 🧠 Build the Knowledge Base
 ```bash
-python src/ingest.py         # Scrape IRS FAQs and PDFs
-python src/build_index.py    # Chunk, embed, save vector store
+make build
 ```
 
-### 5. Launch the Chatbot
+### 5. 💬 Launch the Chatbot
+```bash
+make run
+```
+Or manually:
 ```bash
 streamlit run src/app.py
 ```
 
 ---
 
-## ⚙️ Optional: Run with Docker
-```bash
-docker build -t irs-chatbot .
-docker run -p 8501:8501 irs-chatbot
+## ✅ Example Query
+> **Q:** Do I need to file a tax return if I’m a student?
+> 
+> **A:** You may need to file if your income exceeds certain limits. IRS Publication 501 outlines the thresholds depending on age and dependency status...
+
+---
+
+## 🛠 Requirements
+```
+transformers
+accelerate
+sentencepiece
+faiss-cpu
+torch
+langchain
+streamlit
 ```
 
 ---
 
-## 🧪 Tests (Coming Soon)
-Basic unit tests will cover retrieval, chunking, and query logic.
+## 🛡️ Disclaimer
+This tool provides informational answers using publicly available IRS content. It is **not** a substitute for professional tax or legal advice.
 
 ---
 
-## 🔒 Disclaimer
-This tool provides **informational** responses based on public IRS data. It is **not a substitute** for professional tax advice or legal guidance.
+## 💡 Future Plans
+- Support for GGUF-quantized models (e.g. LLaMA2 4-bit on CPU)
+- Optional CPU fallback models (e.g. Phi-2, TinyLlama)
+- Docker image with pre-cached model
 
 ---
 
-## 📬 Contributions
-Open to issues, PRs, and ideas! Let’s build something helpful together.
-
----
-
-## ⭐️ Give it a Star!
-If this repo saves you from IRS-induced migraines, consider dropping a ⭐️!
-
+## ⭐️ Give It a Star!
+If this project saved you from IRS-induced existential dread, consider dropping a ⭐️ on GitHub!
