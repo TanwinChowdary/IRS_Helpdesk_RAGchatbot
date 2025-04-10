@@ -10,7 +10,9 @@ with open("vector_store.pkl", "rb") as f:
     index, texts = pickle.load(f)
 
 query = st.text_input("Ask your IRS tax question:")
+model = st.selectbox("Choose Ollama model:", ["mistral", "llama2", "phi", "gemma"])
+
 if st.button("Get Answer") and query:
     context = query_index(index, query, texts)
-    answer = generate_answer(context, query)
+    answer = generate_answer(context, query, model=model)
     st.markdown(f"**Answer:** {answer}")
