@@ -1,6 +1,6 @@
 import openai
 import os
-from .embed import get_embedding
+from src.embed import get_embedding
 import numpy as np
 
 def query_index(index, query, texts, top_k=3):
