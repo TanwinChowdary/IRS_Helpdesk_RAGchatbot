@@ -2,6 +2,8 @@ import torch
 import numpy as np
 from src.embed import get_embedding
 from transformers import AutoTokenizer, AutoModelForCausalLM
+import requests
+import json
 
 # Load LLaMA2 model from Hugging Face
 MODEL_NAME = "meta-llama/Llama-2-7b-chat-hf"  # Or any fine-tuned variant you prefer
@@ -21,9 +23,20 @@ def query_index(index, query, texts, top_k=3):
     except Exception as e:
         return f"Error retrieving chunks: {e}"
 
-def generate_answer(context, question, use_openai=False):
-    prompt = f"""<s>[INST] Use the following IRS content to answer the question:\n{context}\n\nQ: {question}\nA: [/INST]"""
-    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-    with torch.no_grad():
-        outputs = model.generate(**inputs, max_new_tokens=300, do_sample=True, temperature=0.7)
-    return tokenizer.decode(outputs[0], skip_special_tokens=True)
+def generate_answer(context, question, model="mistral"):
+    prompt = f"""Use the following IRS content to answer the question:\n\n{context}\n\nQ: {question}\nA:"""
+    
+    try:
+        response = requests.post(
+            "http://localhost:11434/api/generate",
+            headers={"Content-Type": "application/json"},
+            data=json.dumps({
+                "model": model,
+                "prompt": prompt,
+                "stream": False
+            })
+        )
+        data = response.json()
+        return data.get("response", "⚠️ No response received.")
+    except Exception as e:
+        return f"❌ Ollama error: {e}"
