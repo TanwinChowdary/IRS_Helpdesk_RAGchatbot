@@ -1,6 +1,15 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
+# Fetch the Hugging Face API key from the environment variable
+hf_api_key = os.getenv("HF_API_KEY")
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_auth_token=hf_api_key)
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_NAME,
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
 # Constants
 MODEL_NAME = "meta-llama/Llama-2-7b-chat-hf"
 
