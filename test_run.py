@@ -1,17 +1,16 @@
-import os
+from src.rag_pipeline import generate_answer, query_index
 import pickle
-from src.rag_pipeline import query_index, generate_answer
 
-# Test environment setup
-assert os.path.exists("vector_store.pkl"), "❌ vector_store.pkl not found. Run `make build`."
+# Load pre-built vector store
 with open("vector_store.pkl", "rb") as f:
-    index, chunks = pickle.load(f)
+    index_data = pickle.load(f)
 
-# Test sample query
-question = "Do I need to file a tax return if I’m a student?"
-context = query_index(index, question, chunks)
-response = generate_answer(context, question)
+index = index_data["index"]
+texts = index_data["texts"]
 
-print("\n📤 Test Question:", question)
-print("📥 Context Snippet:", context[:300], "...")
-print("💬 Model Response:", response[:300], "...")
+query = "What is the standard deduction for 2024?"
+context = query_index(index, query, texts)
+answer = generate_answer(context, query)
+
+print("\n--- Retrieved Answer ---")
+print(answer)
