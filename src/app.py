@@ -1,18 +1,24 @@
 import streamlit as st
+from src.rag_pipeline import generate_answer, query_index
 import pickle
-from src.rag_pipeline import query_index, generate_answer
 
-st.set_page_config(page_title="IRS LLaMA2 Chatbot")
-st.title("🦙 IRS Tax Assistant – LLaMA2 Powered")
-
-# Load vector store
+# Load the pre-built vector store
 with open("vector_store.pkl", "rb") as f:
-    index, texts = pickle.load(f)
+    index_data = pickle.load(f)
 
-query = st.text_input("Ask your IRS tax question:")
-model = st.selectbox("Choose Ollama model:", ["mistral", "llama2", "phi", "gemma"])
+index = index_data["index"]
+texts = index_data["texts"]
 
-if st.button("Get Answer") and query:
-    context = query_index(index, query, texts)
-    answer = generate_answer(context, query, model=model)
-    st.markdown(f"**Answer:** {answer}")
+# Streamlit UI
+st.title("IRS Helpdesk Chatbot")
+
+user_query = st.text_input("Ask a tax question:")
+
+if user_query:
+    # Retrieve the relevant context from the indexed data
+    context = query_index(index, user_query, texts)
+    
+    # Get the answer using the Hugging Face model
+    answer = generate_answer(context, user_query)
+    
+    st.write(f"Answer: {answer}")
