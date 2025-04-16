@@ -3,6 +3,7 @@ import faiss
 import numpy as np
 import pickle
 from src.embed import get_embedding
+from src.preprocess import chunk_text
 
 def build_faiss_index(data_dir):
     # Read and process the IRS data (FAQs, PDFs, etc.)
@@ -10,12 +11,15 @@ def build_faiss_index(data_dir):
     for file_name in os.listdir(data_dir):
         if file_name.endswith('.txt'):
             with open(os.path.join(data_dir, file_name), 'r') as file:
-                texts.append(file.read())
+                # Chunk the text into smaller sections
+                text = file.read()
+                chunked_texts = chunk_text(text)
+                texts.extend(chunked_texts)
     
-    # Get embeddings for the text data
+    # Get embeddings for the chunked text data
     embeddings = np.array([get_embedding(text) for text in texts], dtype=np.float32)
     
-    # Build the FAISS index
+    # Build the FAISS index for fast retrieval
     index = faiss.IndexFlatL2(embeddings.shape[1])
     index.add(embeddings)
     
