@@ -1,8 +1,11 @@
+install:
+    pip install -r requirements.txt
+
 ingest:
-	python src/ingest.py
+    python src/ingest.py
 
 build:
-	python src/build_index.py
+    python src/build_index.py data/
 
-serve:
-	streamlit run src/app.py
+run:
+    streamlit run src/app.py
