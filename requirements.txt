@@ -1,12 +1,8 @@
-requests
-beautifulsoup4
-pdfplumber
-langchain
-torch
-faiss-cpu
-numpy
-streamlit
 transformers
 accelerate
-bitsandbytes
 sentencepiece
+faiss-cpu
+torch
+langchain
+streamlit
+huggingface_hub
