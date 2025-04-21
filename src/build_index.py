@@ -1,14 +1,10 @@
 import os
 import sys
-# sys.path.insert(0, '/IRS_Helpdesk_RAGchatbot/src')  # Or sys.path.append()
 import embed
-import perprocess
+import preprocess
 import faiss
 import numpy as np
 import pickle
-# from src.embed import get_embedding
-# from src.preprocess import chunk_text
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 def build_faiss_index(data_dir):
     # Read and process the IRS data (FAQs, PDFs, etc.)
     texts = []
@@ -17,7 +13,7 @@ def build_faiss_index(data_dir):
             with open(os.path.join(data_dir, file_name), 'r') as file:
                 # Chunk the text into smaller sections
                 text = file.read()
-                chunked_texts = perprocess.chunk_text(text)
+                chunked_texts = preprocess.chunk_text(text)
                 texts.extend(chunked_texts)
     
     # Get embeddings for the chunked text data
