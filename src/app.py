@@ -1,5 +1,5 @@
 import streamlit as st
-from src.rag_pipeline import generate_answer, query_index
+# from src.rag_pipeline import generate_answer, query_index
 import pickle
 import rag_pipeline
 
