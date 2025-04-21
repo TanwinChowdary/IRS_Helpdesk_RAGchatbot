@@ -1,11 +1,13 @@
 import os
 import sys
+sys.path.insert(0, '/IRS_Helpdesk_RAGchatbot/src')  # Or sys.path.append()
+
 import faiss
 import numpy as np
 import pickle
 from src.embed import get_embedding
 from src.preprocess import chunk_text
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 def build_faiss_index(data_dir):
     # Read and process the IRS data (FAQs, PDFs, etc.)
     texts = []
