@@ -6,3 +6,5 @@ torch
 langchain
 streamlit
 huggingface_hub
+bs4
+sentence_transformers
