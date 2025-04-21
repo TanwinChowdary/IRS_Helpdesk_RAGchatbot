@@ -1,10 +1,11 @@
 import os
+import sys
 import faiss
 import numpy as np
 import pickle
 from src.embed import get_embedding
 from src.preprocess import chunk_text
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 def build_faiss_index(data_dir):
     # Read and process the IRS data (FAQs, PDFs, etc.)
     texts = []
