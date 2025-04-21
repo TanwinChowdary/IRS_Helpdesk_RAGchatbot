@@ -1,6 +1,7 @@
 import streamlit as st
 from src.rag_pipeline import generate_answer, query_index
 import pickle
+import rag_pipeline
 
 # Load the pre-built vector store
 with open("vector_store.pkl", "rb") as f:
@@ -16,9 +17,9 @@ user_query = st.text_input("Ask a tax question:")
 
 if user_query:
     # Retrieve the relevant context from the indexed data
-    context = query_index(index, user_query, texts)
+    context = rag_pipeline.query_index(index, user_query, texts)
     
     # Get the answer using the Hugging Face model
-    answer = generate_answer(context, user_query)
+    answer = rag_pipeline.generate_answer(context, user_query)
     
     st.write(f"Answer: {answer}")
